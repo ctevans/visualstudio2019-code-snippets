@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+    <CodeSnippet Format="1.0.0">
+        <Header>
+            <Title>Command Handler</Title>
+            <Author>Cole Evans</Author>
+            <Description>Generates a Command and Handler class that will facilitate Mediatr communication to
+                the "Domain" part of our application from the "Application" part of the application. 
+                (Architectural decisions might be too specific to generalize here... But that's my usecase.
+                No it's not chandler from the Friends TV show :p 
+            </Description>
+            <Shortcut>chandler</Shortcut>
+        </Header>
+        <Snippet>
+            <Code Language="CSharp">
+                <![CDATA[
+                public class Command : IRequest
+                {
+                    //Properties. Different for each handler.
+                }
+        
+                public class Handler : IRequestHandler<Command>
+                {
+                    private readonly DataContext context;
+        
+                    public Handler(DataContext context)
+                    {
+                        this.context = context;
+                    }
+        
+                    //Still returns Mediatr "Unit" even though we return "Nothing".
+                    public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+                    {
+                        //Handler Logic 
+                        var success = await context.SaveChangesAsync() > 0;
+        
+                        if (success) return Unit.Value; //Returns to API Controller. API Controller returns 200OK.
+        
+                        throw new Exception("Problem saving changes to create new activity.");
+                    }
+                }
+                ]]>
+            </Code>
+        </Snippet>
+    </CodeSnippet>
+</CodeSnippets>
